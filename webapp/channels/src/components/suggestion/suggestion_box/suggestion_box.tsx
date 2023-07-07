@@ -89,6 +89,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         forceSuggestionsWhenBlur: false,
         alignWithTextbox: false,
     };
+    container: any;
    
     constructor(props: Props){
         super(props);
@@ -173,7 +174,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         this.addTextAtCaret(insertText, '');
     };
 
-    getTextbox = () => {
+    getTextbox = (): HTMLInputElement | null => {
         if (!this.inputRef.current) {
             return null;
         }
@@ -191,14 +192,13 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         this.preventSuggestionListCloseFlag = true;
     };
 
-    handleFocusOut = (e) => {
+    handleFocusOut = (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement | HTMLDivElement>) => {
         if (this.preventSuggestionListCloseFlag) {
             this.preventSuggestionListCloseFlag = false;
             return;
         }
-
         // Focus is switching TO e.relatedTarget, so only treat this as a blur event if we're not switching
-        // between children (like from the textbox to the suggestion list)
+        // between children (like from the tetbxox to the suggestion list)
         if (this.container.contains(e.relatedTarget)) {
             return;
         }
@@ -220,7 +220,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         }
     };
 
-    handleFocusIn = (e: Event) => {
+    handleFocusIn = (e: React.FocusEvent) => {
         // Focus is switching FROM e.relatedTarget, so only treat this as a focus event if we're not switching
         // between children (like from the textbox to the suggestion list). PreventSuggestionListCloseFlag is
         // checked because if true, it means that the focusIn comes from a click in the suggestion box, an
@@ -235,7 +235,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
             setTimeout(() => {
                 const textbox = this.getTextbox();
                 if (textbox) {
-                    const pretext = textbox.value.substring(0, textbox.selectionEnd);
+                    const pretext = textbox.value.substring(0, textbox.selectionEnd || 0);
                     if (this.props.openWhenEmpty || pretext.length >= this.props.requiredCharacters) {
                         if (this.pretext !== pretext) {
                             this.handlePretextChanged(pretext);
@@ -250,9 +250,9 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         }
     };
 
-    handleChange = (e: Event) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const textbox = this.getTextbox();
-        const pretext = this.props.shouldSearchCompleteText ? textbox.value.trim() : textbox.value.substring(0, textbox.selectionEnd);
+        const pretext = this.props.shouldSearchCompleteText ? textbox?.value.trim() : textbox?.value.substring(0, textbox.selectionEnd || 0);
 
         if (!this.composing && this.pretext !== pretext) {
             this.handlePretextChanged(pretext);
@@ -270,14 +270,14 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         }
     };
 
-    handleCompositionUpdate = (e) => {
-        if (!e.data) {
+    handleCompositionUpdate = (e: Event) => {
+        if (!e.target) {
             return;
         }
 
         // The caret appears before the CJK character currently being composed, so re-add it to the pretext
         const textbox = this.getTextbox();
-        const pretext = textbox.value.substring(0, textbox.selectionStart) + e.data;
+        const pretext = textbox?.value.substring(0, textbox?.selectionStart || 0) + e.target.data;
 
         this.handlePretextChanged(pretext);
         if (this.props.onComposition) {
@@ -296,7 +296,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         const textbox = this.getTextbox();
         const caret = textbox?.selectionEnd;
         const text = this.props.value;
-        const pretext = textbox?.value.substring(0, textbox.selectionEnd);
+        const pretext = textbox?.value.substring(0, textbox?.selectionEnd || 0);
 
         let prefix;
         let keepPretext = false;
@@ -305,13 +305,13 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
         } else {
             // the pretext has changed since we got a term to complete so see if the term still fits the pretext
             const termWithoutMatched = term.substring(matchedPretext.length);
-            const overlap = SuggestionBox.findOverlap(pretext, termWithoutMatched);
+            const overlap = SuggestionBox.findOverlap(pretext || "", termWithoutMatched);
 
             keepPretext = overlap.length === 0;
             prefix = pretext?.substring(0, pretext.length - overlap.length - matchedPretext.length);
         }
 
-        const suffix = text.substring(caret);
+        const suffix = text.substring(caret || -1);
 
         let newValue: string;
         if (keepPretext) {
@@ -320,7 +320,9 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
             newValue = prefix + term + ' ' + suffix;
         }
 
-        textbox.value = newValue;
+        if(textbox){
+            textbox.value = newValue;
+        }
 
         if (this.props.onChange) {
             // fake an input event to send back to parent components
@@ -334,7 +336,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
 
         // set the caret position after the next rendering
         window.requestAnimationFrame(() => {
-            if (textbox.value === newValue) {
+            if (textbox?.value === newValue) {
                 Utils.setCaretPosition(textbox, prefix.length + term.length + 1);
             }
         });
@@ -403,7 +405,7 @@ export default class SuggestionBox extends React.PureComponent<Props, State>{
             return false;
         }
 
-        this.inputRef.current.focus();
+        this.inputRef?.current.focus();
 
         if (finish && this.props.onKeyPress) {
             let ke: Event = e;

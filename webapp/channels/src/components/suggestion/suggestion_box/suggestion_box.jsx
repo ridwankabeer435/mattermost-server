@@ -97,6 +97,7 @@ export default class SuggestionBox extends React.PureComponent {
         onKeyPress: PropTypes.func,
         onComposition: PropTypes.func,
 
+        onSelect: PropTypes.func,
         onSearchTypeSelected: PropTypes.func,
 
         /**
@@ -623,6 +624,12 @@ export default class SuggestionBox extends React.PureComponent {
         }
     };
 
+    handleSelect = (e) => {
+        if (this.props.onSelect) {
+            this.props.onSelect(e);
+        }
+    };
+
     focusInputOnEscape = () => {
         if (this.inputRef.current) {
             document.dispatchEvent(new CustomEvent(
@@ -833,6 +840,7 @@ export default class SuggestionBox extends React.PureComponent {
                     onCompositionUpdate={this.handleCompositionUpdate}
                     onCompositionEnd={this.handleCompositionEnd}
                     onKeyDown={this.handleKeyDown}
+                    onSelect={this.handleSelect}
                 />
                 {(this.props.openWhenEmpty || this.props.value.length >= this.props.requiredCharacters) && this.state.presentationType === 'text' && (
                     <SuggestionListComponent
