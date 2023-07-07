@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 
 import {addMessageIntoHistory} from 'mattermost-redux/actions/posts';
 
-import SuggestionBox from './suggestion_box';
+import SuggestionBox from './suggestion_box.jsx';
 
 function mapDispatchToProps(dispatch) {
     return {
