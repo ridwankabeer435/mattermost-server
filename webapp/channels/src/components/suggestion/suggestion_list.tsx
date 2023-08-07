@@ -15,11 +15,11 @@ import LoadingSpinner from 'components/widgets/loading/loading_spinner';
 interface Props {
     ariaLiveRef?: React.RefObject<HTMLDivElement>;
     inputRef?: React.RefObject<HTMLDivElement>;
-    open: boolean;
+    open?: boolean;
     position?: 'top' | 'bottom';
     renderDividers?: string[];
     renderNoResults?: boolean;
-    onCompleteWord: (term: string, matchedPretext: string, e?: React.KeyboardEventHandler<HTMLDivElement>) => boolean;
+    onCompleteWord: (term: string, matchedPretext: string, e?: React.KeyboardEvent<HTMLDivElement>) => boolean;
     preventClose?: () => void;
     onItemHover: (term: string) => void;
     pretext: string;

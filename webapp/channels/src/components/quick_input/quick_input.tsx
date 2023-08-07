@@ -224,7 +224,7 @@ export class QuickInput extends React.PureComponent<Props> {
 type ForwardedProps = Omit<React.ComponentPropsWithoutRef<typeof QuickInput>, 'forwardedRef'>;
 
 const forwarded = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, ForwardedProps>((props, ref) => (
-    <QuickInput
+    <QuickInput 
         forwardedRef={ref}
         {...props}
     />

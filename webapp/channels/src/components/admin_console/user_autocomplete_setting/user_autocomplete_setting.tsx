@@ -8,7 +8,7 @@ import {UserAutocomplete} from '@mattermost/types/autocomplete';
 
 import GenericUserProvider from 'components/suggestion/generic_user_provider';
 import Setting from 'components/admin_console/setting';
-import SuggestionBox from 'components/suggestion/suggestion_box';
+import SuggestionBox from 'components/suggestion/suggestion_box/suggestion_box';
 import SuggestionList from 'components/suggestion/suggestion_list';
 
 export type Props = {

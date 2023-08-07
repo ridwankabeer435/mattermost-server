@@ -14,11 +14,11 @@ type SuggestionItem = {
     preventClose: () => void;
     handleEscape: () => void;
     isSelection: boolean;
-    onClick: (term: string, matchedPretext: string[], e?: React.MouseEvent<HTMLDivElement>) => boolean;
+    onClick: (term: string, matchedPretext: string, e?: React.MouseEvent<HTMLDivElement>) => boolean;
 }
 
 type Props = {
-    onCompleteWord: (term: string, matchedPretext: string[], e?: React.MouseEvent<HTMLDivElement>) => boolean;
+    onCompleteWord: (term: string, matchedPretext: string, e?: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => boolean;
     matchedPretext: string[];
     items: SuggestionItem[];
     terms: string[];
